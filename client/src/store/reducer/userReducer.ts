@@ -4,12 +4,16 @@ interface UserState {
   name: string;
   email: string;
   token: string;
+  id: string;
+  type: string;
 }
 
 const initialState: UserState = {
   name: "",
   email: "",
   token: "",
+  id: "",
+  type: "",
 };
 
 export const userSlice = createSlice({

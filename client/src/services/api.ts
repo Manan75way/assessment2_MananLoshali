@@ -1,5 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../store/store";
+import { RootState, useAppSelector } from "../store/store";
+
+const userData = localStorage.getItem("user");
+let parse = userData ? JSON.parse(userData) : "";
+const id = parse.id;
+console.log(id);
+console.log(userData);
+
 
 export const api: any = createApi({
   reducerPath: "api",
@@ -8,7 +15,6 @@ export const api: any = createApi({
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).user.token;
       console.log(token);
-
       if (token) {
         console.log(token);
         headers.set("Authorization", `Bearer ${token}`);
@@ -45,6 +51,23 @@ export const api: any = createApi({
         body,
       }),
     }),
+
+    registerNewVehicle: builder.mutation<Vehicle, any>({
+      query: (body) => ({
+        url: `/driver/register_vehcile/${id}`,
+        method: "PUT",
+        body,
+      }),
+    }),
+
+    setVehicleStatus: builder.mutation<Vehicle, any>({
+      query: (body) => ({
+        url: `/driver/register_vehcile/setstatus/${id}`,
+        method: "PUT",
+        body,
+      }),
+    }),
+
   }),
 });
 
@@ -53,4 +76,6 @@ export const {
   useRegisterNewCustomerMutation,
   useLoginDriverMutation,
   useLoginCustomerMutation,
+  useRegisterNewVehicleMutation,
+  useSetVehicleStatusMutation
 } = api;

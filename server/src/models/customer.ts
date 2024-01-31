@@ -17,18 +17,21 @@ const customerSchema = new mongoose.Schema(
     journey: [
       {
         start: {
-          type: String,
+          type: { type: String, default: "Start" },
+          coordinates: [Number],
         },
         destination: {
-          type: String,
+          type: { type: String, default: "Destination" },
+          coordinates: [Number],
         },
         cost: {
           type: Number,
         },
+        
       },
     ],
   },
   { timestamps: true }
 );
 
-export const Customer = mongoose.model("customeras", customerSchema);
+export const Customer = mongoose.model("customers", customerSchema);

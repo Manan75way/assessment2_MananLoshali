@@ -1,31 +1,35 @@
 import { Navigate, Outlet } from "react-router-dom";
-// import { useAppDispatch, useAppSelector } from "../store/store";
 import { useEffect } from "react";
-import { useAppSelector } from "../store/store";
-// import { userLogin } from "../store/reducers/userReducer";
+import { useAppDispatch, useAppSelector } from "../store/store";
+import { setUser } from "../store/reducer/userReducer";
 
 const BasicLayout = () => {
-  //   const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-  //   useEffect(() => {
-  //     const data: any = localStorage.getItem("user");
+  const userType = useAppSelector((state) => state.user.type);
 
-  //     const parsedData = JSON.parse(data);
-  //     if (parsedData) {
-  //       const userData: LUser = {
-  //         name: parsedData?.name,
-  //         email: parsedData?.email,
-  //         token: parsedData?.token,
-  //       };
-  //       dispatch(userLogin(userData));
-  //     }
-  //   }, []);
+  useEffect(() => {
+    const data: any = localStorage.getItem("user");
 
-  //   const token = useAppSelector((state) => state.user.token);
-  const token  = useAppSelector(state=>state.user.token)
-  //   console.log(token);
+    const parsedData = JSON.parse(data);
+    if (parsedData) {
+      const userData: any = {
+        name: parsedData?.name,
+        email: parsedData?.email,
+        token: parsedData?.token,
+        id: parsedData?.id,
+        type: parsedData?.type,
+      };
+      dispatch(setUser(userData));
+    }
+  }, []);
 
-  return token ? <Navigate to="/dashboard" /> : <Outlet />;
+  const token = useAppSelector((state) => state.user.token);
+  if (userType === "driver") {
+    return token ? <Navigate to="/registervehicle" /> : <Outlet />;
+  } else {
+    return token ? <Navigate to="/findCabs" /> : <Outlet />;
+  }
 };
 
 export default BasicLayout;

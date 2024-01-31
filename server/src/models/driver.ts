@@ -14,26 +14,45 @@ const driverSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    vehcileName: {
+    vehicleName: {
       type: String,
+      default: "",
     },
-    vehcileType: {
+    vehicleType: {
       type: String,
-      enum: ["two Wheeler", "four wheeler"],
+      default: "",
     },
-    vehcileNumber: {
+    vehicleNumber: {
       type: String,
+      default: "",
     },
     isAvailable: {
-      type: Boolean,
-      enum: [true, false],
+      type: String,
     },
-    rideStatus:{
-        type:String,
-        enum:['start','finish','cancel'],
-    }
+    rideStatus: {
+      type: String,
+      default: "",
+    },
+    // coordinates: {
+    //   type: { type: String, default: "Point" },
+    //   coordinates: [Number],
+    // },
+    // availableRides: [
+    //   {
+    //     startPoint: {
+    //       type: { type: String, default: "Start" },
+    //       coordinates: [Number],
+    //     },
+    //     endingPoint: {
+    //       type: { type: String, default: "Destination" },
+    //       coordinates: [Number],
+    //     },
+    //   },
+    // ],
   },
   { timestamps: true }
 );
+
+driverSchema.index({ coordinates: "2dsphere" });
 
 export const Driver = mongoose.model("drivers", driverSchema);

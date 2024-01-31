@@ -7,23 +7,35 @@ import Home from "./pages/home";
 import BasicLayout from "./layout/basicLayout";
 import AuthLayout from "./layout/authLayout";
 import Dashboard from "./pages/dashborad";
+import RegisterVehicle from "./pages/registerVehicle";
+import VehicleStatus from "./pages/vehicleStatus";
+import FindCab from "./pages/findCab";
+import { useAppSelector } from "./store/store";
 
 function App() {
+  const userType = useAppSelector((state) => state.user.type);
+
   return (
     <Routes>
-      <Route element={<BasicLayout/>}>
-      <Route path="/" element={<Home />} />
-      <Route path="/customerlogin" element={<CustomerLogin />} />
-      <Route path="/customerregister" element={<CustomerRegister />} />
-      <Route path="/driverlogin" element={<DriverLogin />} />
-      <Route path="/driverregister" element={<DriverRegister />} />
+      <Route element={<BasicLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/customerlogin" element={<CustomerLogin />} />
+        <Route path="/customerregister" element={<CustomerRegister />} />
+        <Route path="/driverlogin" element={<DriverLogin />} />
+        <Route path="/driverregister" element={<DriverRegister />} />
       </Route>
 
-      <Route element={<AuthLayout/>}>
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route element={<AuthLayout />}>
+        {userType === "customer" ? (
+          <Route path="/findCabs" element={<FindCab />} />
+        ) : (
+          <>
+            <Route path="/setstatus" element={<VehicleStatus />} />
+            <Route path="/registervehicle" element={<RegisterVehicle />} />
+          </>
+        )}
       </Route>
     </Routes>
-   
   );
 }
 

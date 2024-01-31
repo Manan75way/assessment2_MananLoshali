@@ -20,6 +20,7 @@ export const verifyToken = async (
       res.status(403).json({ msg: "Unauthorized" });
       return;
     } else {
+      console.log(data);
       req.driver = data;
       next();
     }
@@ -33,8 +34,8 @@ export const verifyTokenAndAutherization = async (
 ) => {
   verifyToken(req, res, () => {
     console.log(req.params.id);
-    console.log(req.user._id);
-    if (req.user._id !== req.params.id) {
+    console.log(req.driver._id);
+    if (req.driver._id !== req.params.id) {
       res.status(402).json({ msg: "You are not allowed" });
       return;
     } else {

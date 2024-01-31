@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { object, string, number } from "yup";
 import { useRegisterNewDriverMutation } from "../services/api";
 
@@ -13,6 +13,8 @@ type formValue = {
 const DriverRegister = () => {
   const form = useForm<formValue>();
   const { register, handleSubmit } = form;
+
+  const navigate = useNavigate();
 
   const [driverRegister] = useRegisterNewDriverMutation();
 
@@ -35,7 +37,7 @@ const DriverRegister = () => {
         try {
           const payload = await driverRegister(datas).unwrap();
           console.log("fulfilled", payload);
-          <Navigate to="/driverlogin"/>
+          navigate("/driverlogin")
         } catch (error) {
           console.error("rejected", error);
         }

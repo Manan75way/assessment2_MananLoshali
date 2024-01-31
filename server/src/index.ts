@@ -3,8 +3,11 @@ import dotenv from "dotenv";
 import path from "path";
 import cors from "cors";
 import { connectToDb } from "./db/connectDB";
-import driverRoute from "./routes/authRoute";
-import customerRoute from "./routes/authRoute";
+import driverRoute from "./routes/authDriverRoute";
+import customerRoute from "./routes/authCustomerRoute";
+import driverVehicleRoute from "./routes/driverRoutes"
+import findAllCabs from "./routes/customerRoutes"
+
 
 const app = express();
 
@@ -25,7 +28,10 @@ app.use("/api/driver", driverRoute);
 app.use("/api/customer", customerRoute);
 
 //driver routes
-app.use("/api/driver/register_vehcile",driverRoute);
+app.use("/api/driver/register_vehcile",driverVehicleRoute);
+
+//customer routes
+app.use("/api/customer/cabs",findAllCabs)
 
 
 app.listen(PORT, () => {

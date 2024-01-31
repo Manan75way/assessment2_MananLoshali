@@ -1,8 +1,10 @@
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { object, string, number } from "yup";
-// import { useRegisterNewUserMutation } from "../services/api";
+import { useLoginDriverMutation } from "../services/api";
+import { useAppDispatch } from "../store/store";
+import { setUser } from "../store/reducer/userReducer";
+
 type formValue = {
   email: string;
   password: string;
@@ -11,8 +13,9 @@ type formValue = {
 const DriverLogin = () => {
   const form = useForm<formValue>();
   const { register, handleSubmit } = form;
-  //   const [userRegister] = useRegisterNewUserMutation();
-  //   const { name, ref, onChange, onBlur } = register("username");
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [driverLogin] = useLoginDriverMutation();
 
   const schema = object({
     email: string().email().required(),
@@ -22,20 +25,32 @@ const DriverLogin = () => {
   const onSubmit = async (data: formValue) => {
     const userData = schema.validate(data);
 
-    // userData
-    //   .then(async (datas) => {
-    //     console.log(datas);
+    userData
+      .then(async (datas) => {
+        console.log(datas);
 
-    //     try {
-    //       const payload = await userRegister(datas).unwrap();
-    //       console.log('fulfilled', payload)
-    //     } catch (error) {
-    //       console.error('rejected', error);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.log("error", error);
-    //   });
+        try {
+          const payload = await driverLogin(datas).unwrap();
+          console.log("fulfilled", payload);
+
+          const actionData = {
+            name: payload.users.username,
+            email: payload.users.email,
+            token: payload.token,
+            id: payload.users._id,
+            type: "driver",
+          };
+
+          localStorage.setItem("user", JSON.stringify(actionData));
+          dispatch(setUser(actionData));
+          navigate("/registervehicle");
+        } catch (error) {
+          console.error("rejected", error);
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
   };
 
   return (
@@ -45,7 +60,6 @@ const DriverLogin = () => {
         className="w-[40%] h-[40%] border rounded-lg border-cyan-950 flex flex-col gap-7 px-10 py-8"
         onSubmit={handleSubmit(onSubmit)}
       >
-
         <div className=" w-full flex justify-between">
           <label
             className=" text-orange-500 font-semibold text-lg"
@@ -55,7 +69,7 @@ const DriverLogin = () => {
           </label>
           <input
             className="w-[60%] border-blue-300 border-b-teal-400 "
-            placeholder="Enter the username"
+            placeholder="Enter the useremail"
             type="email"
             id="email"
             {...register("email")}
@@ -71,7 +85,7 @@ const DriverLogin = () => {
           </label>
           <input
             className="w-[60%] border-blue-300 border-b-teal-400 "
-            placeholder="Enter the username"
+            placeholder="Enter the password"
             type="password"
             id="password"
             {...register("password")}
@@ -84,9 +98,8 @@ const DriverLogin = () => {
         >
           Submit
         </button>
-        <Link to='/driverregister'>New user Register</Link>
+        <Link to="/driverregister">New user Register</Link>
       </form>
-    
     </div>
   );
 };
