@@ -2,13 +2,16 @@ import React, { FormEvent, useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useSetVehicleStatusMutation } from "../services/api";
 
+import L from "leaflet";
+
+import "leaflet/dist/leaflet.css";
+
 const VehicleStatus = () => {
   const [isAvailable, setIsAvailable] = useState<String>();
   const [show, setShow] = useState<Boolean>(false);
 
-  const[lat,setLat] = useState();
-  const[long,setLong] = useState();
-
+  const [lat, setLat] = useState(0);
+  const [long, setLong] = useState(0);
 
   const [setVehicleStatus] = useSetVehicleStatusMutation();
 
@@ -18,7 +21,7 @@ const VehicleStatus = () => {
     try {
       const payload = await setVehicleStatus(isAvailable).unwrap();
       console.log("fulfilled", payload);
-      setShow(true)
+      setShow(true);
       //   if (payload.updateVehcile.isAvailable === "true") {
       //     console.log(payload.updateVehcile.isAvailable);
       //     setShow(true);
@@ -50,75 +53,87 @@ const VehicleStatus = () => {
     getUserLocation();
   }, [isAvailable]);
 
+const getRides = ()=>{
+
+}
+
   return (
-    <div className="w-screen h-screen flex justify-center items-center flex-col gap-5">
-      <form
-        className="w-[30%] h-[30%] border rounded-lg border-cyan-950 flex flex-col gap-7 px-10 py-8"
-        onSubmit={(e) => handleSubmit(e)}
-      >
-        <p className="text-orange-500 font-bold text-2xl">
-          Please select your Vehicle Status:
-        </p>
-        <div className=" w-[50%] flex justify-around">
-          <input
-            className="w-[10%] border-blue-300 border-b-teal-400 "
-            type="radio"
-            id="active"
-            name="status"
-            value="true"
-            onChange={(e) => setIsAvailable(e.target.value)}
-          />
-          <label
-            className=" text-orange-500 font-semibold text-lg"
-            htmlFor="active"
-          >
-            Active
-          </label>
-        </div>
-
-        <div className=" w-[50%] flex justify-around">
-          <input
-            className="w-[10%] border-blue-300 border-b-teal-400 "
-            type="radio"
-            id="active"
-            name="status"
-            value="false"
-            onChange={(e) => setIsAvailable(e.target.value)}
-          />
-          <label
-            className=" text-orange-500 font-semibold text-lg"
-            htmlFor="inactive"
-          >
-            Inactive
-          </label>
-        </div>
-        <button
-          className="w-20 cursor-pointer h-14 rounded-md text-lg text-green-500 border-red-500 border"
-          type="submit"
+    <div className="w-screen h-screen flex justify-center items-center gap-5">
+      <div className="w-[30%] h-[200px] ml-3">
+        <form
+          className="w-[90%] h-full border rounded-lg border-cyan-950 flex flex-col gap-2 px-3 py-2"
+          onSubmit={(e) => handleSubmit(e)}
         >
-          Submit
-        </button>
-      </form>
-      
-      {show && <>
-      
-      <p>Latitude {lat}</p>
-      <p>Longitude {long}</p>
+          <p className="text-orange-500 font-bold text-xl">
+            Please select your Vehicle Status:
+          </p>
+          <div className=" w-[50%] flex justify-around">
+            <input
+              className="w-[10%] border-blue-300 border-b-teal-400 "
+              type="radio"
+              id="active"
+              name="status"
+              value="true"
+              onChange={(e) => setIsAvailable(e.target.value)}
+            />
+            <label
+              className=" text-orange-500 font-semibold text-lg"
+              htmlFor="active"
+            >
+              Active
+            </label>
+          </div>
 
-      </>}
-    
+          <div className=" w-[50%] flex justify-around">
+            <input
+              className="w-[10%] border-blue-300 border-b-teal-400 "
+              type="radio"
+              id="active"
+              name="status"
+              value="false"
+              onChange={(e) => setIsAvailable(e.target.value)}
+            />
+            <label
+              className=" text-orange-500 font-semibold text-lg"
+              htmlFor="inactive"
+            >
+              Inactive
+            </label>
+          </div>
+          <button
+            className="w-20 cursor-pointer h-14 rounded-md text-lg text-green-500 border-red-500 border"
+            type="submit"
+          >
+            Submit
+          </button>
+        </form>
+        {show && (
+          <>
+            <button className="w-20 cursor-pointer h-14 rounded-md text-lg text-green-500 mt-4 ml-9 bg-yellow-200 border-red-500 border" onClick={getRides}>
+              Find Request
+            </button>
+          </>
+        )}
+      </div>
+      {show && (
+        <div className="w-[70%] h-[500px]">
+          <MapContainer
+            center={[30.704649, 76.717873]}
+            zoom={13}
+            style={{ width: "100%", height: "500px" }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
 
-      {/* <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={[51.505, -0.09]}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
-      </MapContainer> */}
+            <Marker
+              position={[lat, long]}
+              icon={L.icon({ iconUrl: "/start.png" })}
+            />
+          </MapContainer>
+        </div>
+      )}
     </div>
   );
 };

@@ -33,26 +33,32 @@ const driverSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    // coordinates: {
-    //   type: { type: String, default: "Point" },
-    //   coordinates: [Number],
-    // },
-    // availableRides: [
-    //   {
-    //     startPoint: {
-    //       type: { type: String, default: "Start" },
-    //       coordinates: [Number],
-    //     },
-    //     endingPoint: {
-    //       type: { type: String, default: "Destination" },
-    //       coordinates: [Number],
-    //     },
-    //   },
-    // ],
+    coordinates: {
+      type: { type: String, default: "Point" },
+      coordinates: {
+        type: [Number],
+        index: "2dsphere", // Add an index for GeoJSON support
+        default: [0, 0],
+      },
+    },
+    availableRides: [
+      {
+        startPoint: {
+          location: String,
+          type: { type: String, default: "Start" },
+          coordinates: [Number],
+          default: [0, 0],
+        },
+        endingPoint: {
+          location: String,
+          type: { type: String, default: "Destination" },
+          coordinates: [Number],
+          default: [0, 0],
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
-
-driverSchema.index({ coordinates: "2dsphere" });
 
 export const Driver = mongoose.model("drivers", driverSchema);
