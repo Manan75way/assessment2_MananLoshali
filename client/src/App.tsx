@@ -14,6 +14,7 @@ import { useAppSelector } from "./store/store";
 
 function App() {
   const userType = useAppSelector((state) => state.user.type);
+console.log(userType);
 
   return (
     <Routes>

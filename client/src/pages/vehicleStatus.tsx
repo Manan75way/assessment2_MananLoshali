@@ -1,6 +1,9 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { useSetVehicleStatusMutation } from "../services/api";
+import {
+  useSetVehicleStatusMutation,
+  useFindNearRidesQuery,
+} from "../services/api";
 
 import L from "leaflet";
 
@@ -10,17 +13,30 @@ const VehicleStatus = () => {
   const [isAvailable, setIsAvailable] = useState<String>();
   const [show, setShow] = useState<Boolean>(false);
 
+  const [showRides, setShowRides] = useState(false);
+
   const [lat, setLat] = useState(0);
   const [long, setLong] = useState(0);
 
   const [setVehicleStatus] = useSetVehicleStatusMutation();
 
+  const { isLoading, isError, isSuccess, data, error } =
+    useFindNearRidesQuery("");
+  console.log(isLoading, isError, isSuccess, data?.rides, error);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log(isAvailable);
+    const coordinates = [lat, long];
     try {
-      const payload = await setVehicleStatus(isAvailable).unwrap();
+      console.log(coordinates);
+
+      const payload = await setVehicleStatus({
+        isAvailable,
+        coordinates,
+      }).unwrap();
       console.log("fulfilled", payload);
+
       setShow(true);
       //   if (payload.updateVehcile.isAvailable === "true") {
       //     console.log(payload.updateVehcile.isAvailable);
@@ -53,9 +69,9 @@ const VehicleStatus = () => {
     getUserLocation();
   }, [isAvailable]);
 
-const getRides = ()=>{
-
-}
+  const getRides = async () => {
+    setShowRides(true);
+  };
 
   return (
     <div className="w-screen h-screen flex justify-center items-center gap-5">
@@ -109,10 +125,25 @@ const getRides = ()=>{
         </form>
         {show && (
           <>
-            <button className="w-20 cursor-pointer h-14 rounded-md text-lg text-green-500 mt-4 ml-9 bg-yellow-200 border-red-500 border" onClick={getRides}>
-              Find Request
+            <button
+              className="w-20 cursor-pointer h-14 rounded-md text-lg text-green-500 mt-4 ml-9 bg-yellow-200 border-red-500 border"
+              onClick={getRides}
+            >
+              Find Ride
             </button>
           </>
+        )}
+
+        {showRides && (
+          <div>
+            {data?.rides.map((item: any) => (
+              <div className="border-2 border-black p-3">  
+               <p>Start Point: {item.startPoint.coordinates}</p>
+                <p>Ending Point: {item.endingPoint.coordinates}</p>
+                <button className="cursor-pointer h-10 rounded-md text-lg text-green-500 mt-4 ml-9 bg-yellow-200 border-red-500 border">Accept Ride</button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
       {show && (

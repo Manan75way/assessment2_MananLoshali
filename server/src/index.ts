@@ -7,7 +7,7 @@ import driverRoute from "./routes/authDriverRoute";
 import customerRoute from "./routes/authCustomerRoute";
 import driverVehicleRoute from "./routes/driverRoutes"
 import findAllCabs from "./routes/customerRoutes"
-
+import fetchRide from "./routes/fetchRide"
 
 const app = express();
 
@@ -29,6 +29,9 @@ app.use("/api/customer", customerRoute);
 
 //driver routes
 app.use("/api/driver/register_vehcile",driverVehicleRoute);
+
+//find ride requested by user
+app.use("/api/fetchride",fetchRide);
 
 //customer routes
 app.use("/api/customer/cabs",findAllCabs)

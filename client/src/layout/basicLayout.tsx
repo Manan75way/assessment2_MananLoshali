@@ -6,11 +6,8 @@ import { setUser } from "../store/reducer/userReducer";
 const BasicLayout = () => {
   const dispatch = useAppDispatch();
 
-  const userType = useAppSelector((state) => state.user.type);
-
   useEffect(() => {
     const data: any = localStorage.getItem("user");
-
     const parsedData = JSON.parse(data);
     if (parsedData) {
       const userData: any = {
@@ -25,10 +22,15 @@ const BasicLayout = () => {
   }, []);
 
   const token = useAppSelector((state) => state.user.token);
-  if (userType === "driver") {
-    return token ? <Navigate to="/registervehicle" /> : <Outlet />;
-  } else {
+  const userType = useAppSelector((state) => state.user.type);
+  const name = useAppSelector((state) => state.user.name);
+
+  console.log(name);
+
+  if (userType === "customer") {
     return token ? <Navigate to="/findCabs" /> : <Outlet />;
+  } else {
+    return token ? <Navigate to="/registervehicle" /> : <Outlet />;
   }
 };
 

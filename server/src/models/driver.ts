@@ -29,12 +29,11 @@ const driverSchema = new mongoose.Schema(
     isAvailable: {
       type: String,
     },
-    rideStatus: {
-      type: String,
-      default: "",
-    },
     coordinates: {
-      type: { type: String, default: "Point" },
+      type: {
+        type: String,
+        default: "Point",
+      },
       coordinates: {
         type: [Number],
         index: "2dsphere", // Add an index for GeoJSON support
@@ -54,6 +53,10 @@ const driverSchema = new mongoose.Schema(
           type: { type: String, default: "Destination" },
           coordinates: [Number],
           default: [0, 0],
+        },
+        isAccepted: {
+          type: String,
+          default: "false",
         },
       },
     ],

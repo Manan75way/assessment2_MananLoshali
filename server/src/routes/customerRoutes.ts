@@ -4,7 +4,7 @@ import { verifyTokenAndAutherization } from "../middleware/verifyToken";
 
 const router = express.Router();
 
-router.get("/find/:id", verifyTokenAndAutherization, findCabs);
+router.post("/find/:id", verifyTokenAndAutherization, findCabs);
 
 router.post("/requestride/:id",verifyTokenAndAutherization,requestRide);
 

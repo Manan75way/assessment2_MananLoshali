@@ -2,29 +2,21 @@ import { Request, Response } from "express";
 import { Driver } from "../models/driver";
 
 export const findCabs = async (req: Request, res: Response) => {
-  const { lat, long } = req.body();
+  const { lat, long } = req.body;
 
   try {
-    const fetchCabs = async () => {
-      const cabs = await Driver.find({
-        coordinates: {
-          $near: {
-            $geometry: {
-              type: "Point",
-              coordinates: [lat, long],
-            },
-            $maxDistance: 1000,
+    const cabs = await Driver.find({
+      coordinates: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [lat, long],
           },
+          $maxDistance: 1000,
         },
-      });
-      res.status(200).json({ msg: "Found Cabs Near You", cabs: cabs });
-    };
-
-    const setTimer = setInterval(fetchCabs, 1000);
-
-    setTimeout(() => {
-      clearInterval(setTimer);
-    }, 1000 * 60 * 10);
+      },
+    });
+    res.status(200).json({ msg: "Found Cabs Near You", cabs: cabs });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Internal server error" });
@@ -36,32 +28,26 @@ export const requestRide = async (req: Request, res: Response) => {
   const { startCoordinates, destinationCoordinates, lat, long } = req.body;
 
   try {
-    const requestRide = await Driver.find({
-      coordinates: {
-        $near: {
-          $geometry: {
-            type: "Point",
-            coordinates: [lat, long],
+    const requestRide = await Driver.updateMany(
+      {
+        coordinates: {
+          $geoWithin: {
+            $centerSphere: [
+              [long, lat], // coordinates of the center point
+              1000 / 6371, // radius in kilometers (convert to radians)
+            ],
           },
-          $maxDistance: 1000,
         },
       },
-    }).updateMany(
-      {},
       {
         $set: {
           availableRides: {
-            startPoint: {
-              coordinates: startCoordinates,
-            },
-            endingPoint: {
-              coordinates: destinationCoordinates,
-            },
+            "startPoint.coordinates": startCoordinates,
+            "endingPoint.coordinates": destinationCoordinates,
           },
         },
       }
     );
-
     res.status(200).json({ msg: "Ride requested successfully", requestRide });
   } catch (error) {
     console.log(error);

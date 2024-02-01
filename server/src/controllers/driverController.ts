@@ -35,7 +35,7 @@ export const registerVehcile = async (req: Request, res: Response) => {
 
 export const setVehicleStatus = async (req: Request, res: Response) => {
   const { isAvailable, coordinates } = req.body;
-  console.log(`isAvailable ${isAvailable}`);
+  console.log(`isAvailable ${isAvailable} ${coordinates}`);
   const id = req.params.id;
 
   try {
@@ -45,11 +45,10 @@ export const setVehicleStatus = async (req: Request, res: Response) => {
       },
     });
 
-
-    if(isAvailable === "true"){
-      const updateVehcile = await Driver.findByIdAndUpdate(id, {
+    if (isAvailable === "true") {
+      const updateVehciles = await Driver.findByIdAndUpdate(id, {
         $set: {
-          coordinates: coordinates,
+          "coordinates.coordinates": coordinates,
         },
       });
     }
@@ -59,6 +58,17 @@ export const setVehicleStatus = async (req: Request, res: Response) => {
       updateVehcile: updateVehcile,
     });
   } catch (error) {
+    res.status(500).json({ msg: "Internal server error" });
+  }
+};
+
+export const findRides = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  try {
+    const rides = await Driver.findOne({ _id: id });
+    res.status(200).json({ msg: "Found Rides Near You", rides: rides?.availableRides });
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ msg: "Internal server error" });
   }
 };

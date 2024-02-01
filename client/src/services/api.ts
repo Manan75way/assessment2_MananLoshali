@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState, useAppSelector } from "../store/store";
+import { RootState } from "../store/store";
 
 const userData = localStorage.getItem("user");
 let parse = userData ? JSON.parse(userData) : "";
 const id = parse.id;
 console.log(id);
 console.log(userData);
-
 
 export const api: any = createApi({
   reducerPath: "api",
@@ -68,6 +67,25 @@ export const api: any = createApi({
       }),
     }),
 
+    findAllCabs: builder.mutation<any, any>({
+      query: (body) => ({
+        url: `/customer/cabs/find/${id}`,
+        method: "POST",
+        body,
+      }),
+    }),
+
+    requestRide: builder.mutation<any, any>({
+      query: (body) => ({
+        url: `/customer/cabs/requestride/${id}`,
+        method: "POST",
+        body,
+      }),
+    }),
+
+    findNearRides: builder.query<any, any>({
+      query: () => `/fetchride/${id}`,
+    }),
   }),
 });
 
@@ -77,5 +95,8 @@ export const {
   useLoginDriverMutation,
   useLoginCustomerMutation,
   useRegisterNewVehicleMutation,
-  useSetVehicleStatusMutation
+  useSetVehicleStatusMutation,
+  useFindAllCabsMutation,
+  useRequestRideMutation,
+  useFindNearRidesQuery,
 } = api;

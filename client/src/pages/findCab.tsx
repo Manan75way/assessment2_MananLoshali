@@ -1,25 +1,60 @@
 import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import Maps from "../components/Maps";
+import {
+  useFindAllCabsMutation,
+  useRequestRideMutation,
+} from "../services/api";
 
 const FindCab = () => {
   const [position, setPosition] = useState<[number, number] | null>(null);
+  const [lat, setLat] = useState(0);
+  const [long, setLong] = useState(0);
+  const [cab, setCab] = useState<Array<any>>([]);
+  const [destinationCoordinates, setDestinationCoordinates] = useState([
+    30.7099655, 76.6899143,
+  ]);
+  const [startCoordinates, setStartCoordinates] = useState([
+    30.7099655, 76.6899143,
+  ]);
+
+  const [show, setShow] = useState(false);
+
+  const [findAllVehicle] = useFindAllCabsMutation();
+
+  const [requestRide] = useRequestRideMutation();
 
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((geoLocation) => {
         const { latitude, longitude } = geoLocation.coords;
         setPosition([latitude, longitude]);
-        console.log(position);
-        console.log(latitude, longitude);
+        setLat(latitude);
+        setLong(longitude);
       });
     } else {
       alert("Geolocation is not supported in your browser");
     }
   }, []);
 
-  const searchRide = () => {
-    
+  const getAllCabs = async () => {
+    const payload = await findAllVehicle({ lat, long }).unwrap();
+    console.log("fulfilled", payload);
+    setShow(true);
+    setCab(payload.cabs);
+    console.log(cab);
+  };
+
+  console.log(cab.length);
+
+  const searchRide = async () => {
+    const payload = await requestRide({
+      startCoordinates,
+      destinationCoordinates,
+      long,
+      lat,
+    }).unwrap();
+    console.log("fulfilled", payload);
   };
 
   return (
@@ -35,8 +70,35 @@ const FindCab = () => {
             className="border-2 bg-slate-600 font-semibold text-base rounded-lg py-1 cursor-pointer"
             onClick={searchRide}
           >
-            Search Ride
+            Request Ride
           </button>
+        </div>
+        <div className="flex flex-col">
+          <button
+            className="w-20 cursor-pointer h-14 rounded-md text-lg text-green-500 mt-4 ml-9 bg-yellow-200 border-red-500 border"
+            onClick={getAllCabs}
+          >
+            Find Vehicles
+          </button>
+
+          {show && (
+            <div>
+              {cab.length === 0 ? (
+                <div>
+                  <p className="text-red-400 text-xl">
+                    No vehicles found currently.
+                  </p>
+                  <p className="text-red-400 text-lg"> Try again later</p>
+                </div>
+              ) : (
+                <div>
+                  {cab?.map((item) => (
+                    <div>{item.username}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       <div className="w-[70%]">

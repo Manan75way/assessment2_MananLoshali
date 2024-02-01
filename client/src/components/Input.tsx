@@ -7,18 +7,14 @@ type Props = {
 
 const Input = (types: Props) => {
   const type = types.types;
+  const startPoint = `${types.location?.[0]} - ${types.location?.[1]}`;
 
-  const [startValue, setStartValue] = useState<string>(
-    `${types.location?.[0]} - ${types.location?.[1]}`
-  );
+  const [startValue, setStartValue] = useState<string>(startPoint);
   const [endValue, setEndValue] = useState("");
-
-  console.log(startValue,type);
 
   const handleInputChange = (event: any) => {
     setEndValue(event.target.value);
   };
-
 
   const handleChange = (event: any) => {
     setStartValue(event.target.value);
