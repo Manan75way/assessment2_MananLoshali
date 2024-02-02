@@ -5,12 +5,13 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 interface Props {
-  positions: [number, number] | null;
+  positions: [number, number] | null | undefined;
 }
 
 const Maps = (positions: Props) => {
-  const location = positions.positions;
-  console.log(positions.positions);
+  const location = positions.positions
+
+  console.log(location);
   // const initial = [location?.[0],location?.[1]];
 
   const end: [number, number] | null = [30.704649, 76.717873] || null;

@@ -13,7 +13,7 @@ type formValue = {
 const CustomerLogin = () => {
   const form = useForm<formValue>();
   const { register, handleSubmit } = form;
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [customerLogin] = useLoginCustomerMutation();
   const dispatch = useAppDispatch();
   const schema = object({
@@ -26,8 +26,6 @@ const navigate = useNavigate();
 
     userData
       .then(async (datas) => {
-        console.log(datas);
-
         try {
           const payload = await customerLogin(datas).unwrap();
           console.log("fulfilled", payload);
@@ -36,12 +34,12 @@ const navigate = useNavigate();
             name: payload.users.username,
             email: payload.users.email,
             token: payload.token,
-            id:payload.users._id,
-            type:"customer"
+            id: payload.users._id,
+            type: "customer",
           };
           localStorage.setItem("user", JSON.stringify(actionData));
           dispatch(setUser(actionData));
-          navigate("/findCabs")
+          navigate("/findCabs");
         } catch (error) {
           console.error("rejected", error);
         }

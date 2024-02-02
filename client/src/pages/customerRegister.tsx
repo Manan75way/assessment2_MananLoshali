@@ -15,7 +15,7 @@ const CustomerRegister = () => {
   const { register, handleSubmit } = form;
   const [customerRegister] = useRegisterNewCustomerMutation();
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const schema = object({
     username: string().required(),
@@ -28,14 +28,12 @@ const navigate = useNavigate();
 
     userData
       .then(async (datas) => {
-        console.log(datas);
-
         try {
           const payload = await customerRegister(datas).unwrap();
-          console.log('fulfilled', payload);
+          console.log("fulfilled", payload);
           navigate("/customerlogin");
         } catch (error) {
-          console.error('rejected', error);
+          console.error("rejected", error);
         }
       })
       .catch((error) => {

@@ -23,9 +23,6 @@ const BasicLayout = () => {
 
   const token = useAppSelector((state) => state.user.token);
   const userType = useAppSelector((state) => state.user.type);
-  const name = useAppSelector((state) => state.user.name);
-
-  console.log(name);
 
   if (userType === "customer") {
     return token ? <Navigate to="/findCabs" /> : <Outlet />;

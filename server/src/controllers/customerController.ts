@@ -25,7 +25,9 @@ export const findCabs = async (req: Request, res: Response) => {
 
 export const requestRide = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { startCoordinates, destinationCoordinates, lat, long } = req.body;
+  const { startCoordinates, destinationCoordinates, lat, long, start, end } =
+    req.body;
+  console.log(startCoordinates, destinationCoordinates, start, end);
 
   try {
     const requestRide = await Driver.updateMany(
@@ -42,8 +44,10 @@ export const requestRide = async (req: Request, res: Response) => {
       {
         $set: {
           availableRides: {
-            "startPoint.coordinates": startCoordinates,
-            "endingPoint.coordinates": destinationCoordinates,
+            "availableRides.$[element].startPoint.coordinates":
+              startCoordinates,
+            "availableRides.$[element].endingPoint.coordinates":
+              destinationCoordinates,
           },
         },
       }
