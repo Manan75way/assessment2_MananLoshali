@@ -3,6 +3,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import {
   useSetVehicleStatusMutation,
   useFindNearRidesQuery,
+  useFindAllNearRidesMutation,
 } from "../services/api";
 
 import L from "leaflet";
@@ -20,14 +21,18 @@ const VehicleStatus = () => {
 
   const [setVehicleStatus] = useSetVehicleStatusMutation();
 
-  const { isLoading, isError, isSuccess, data, error } =
-    useFindNearRidesQuery("");
-  console.log(isLoading, isError, isSuccess, data?.rides, error);
+  const [findNearRides] = useFindAllNearRidesMutation();
+
+  // const { isLoading, isError, isSuccess, data, error } =
+  //   useFindNearRidesQuery("");
+
+  // console.log(isLoading, isError, isSuccess, data?.rides, error);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log(isAvailable);
-    const coordinates = [lat, long];
+    const coordinates = [long, lat];
+
     try {
       console.log(coordinates);
 
@@ -51,7 +56,7 @@ const VehicleStatus = () => {
   function getLocation(position: any) {
     console.log(position.coords.latitude);
     setLat(position.coords.latitude);
-    setLong(position.coords.latitude);
+    setLong(position.coords.longitude);
   }
 
   function failedToGetLocation() {
@@ -70,6 +75,9 @@ const VehicleStatus = () => {
   }, [isAvailable]);
 
   const getRides = async () => {
+    const payload = await findNearRides({isAvailable}).unwrap()
+    console.log(payload);
+    
     setShowRides(true);
   };
 
@@ -135,15 +143,18 @@ const VehicleStatus = () => {
         )}
 
         {showRides && (
-          <div>
-            {data?.rides.map((item: any) => (
-              <div className="border-2 border-black p-3">  
-               <p>Start Point: {item.startPoint.coordinates}</p>
-                <p>Ending Point: {item.endingPoint.coordinates}</p>
-                <button className="cursor-pointer h-10 rounded-md text-lg text-green-500 mt-4 ml-9 bg-yellow-200 border-red-500 border">Accept Ride</button>
-              </div>
-            ))}
-          </div>
+          // <div>
+          //   {data?.rides.map((item: any) => (
+          //     <div className="border-2 border-black p-3">
+          //       <p>Start Point: {item.startPoint.coordinates}</p>
+          //       <p>Ending Point: {item.endingPoint.coordinates}</p>
+          //       <button className="cursor-pointer h-10 rounded-md text-lg text-green-500 mt-4 ml-9 bg-yellow-200 border-red-500 border">
+          //         Accept Ride
+          //       </button>
+          //     </div>
+          //   ))}
+          // </div>
+          <div></div>
         )}
       </div>
       {show && (

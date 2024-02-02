@@ -7,25 +7,20 @@ import {
 } from "../services/api";
 
 const FindCab = () => {
-  const [position, setPosition] = useState<[number, number] | null>(); // current Location
+  const [position, setPosition] = useState<[number, number]>(); // current Location
 
   const [start, setStart] = useState(""); //customer start location
   const [end, setEnd] = useState(""); //customer end location
 
   const [cab, setCab] = useState<Array<any>>([]);
 
-  const [destinationCoordinates, setDestinationCoordinates] = useState([
-    30.7099655, 76.6899143,
-  ]);
-  const [startCoordinates, setStartCoordinates] = useState([
-    30.7099655, 76.6899143,
-  ]);
   const [show, setShow] = useState(false);
 
   const [findAllVehicle] = useFindAllCabsMutation();
   const [requestRide] = useRequestRideMutation();
 
-  let lat: any, long: any;
+  const [lat, setLat] = useState(0);
+  const [long, setLong] = useState(0);
 
   const getLocation = async () => {
     if ("geolocation" in navigator) {
@@ -33,6 +28,8 @@ const FindCab = () => {
         const { latitude, longitude } = geoLocation.coords;
         setPosition([latitude, longitude]);
         const startvalue = `${latitude} - ${longitude}`;
+        setLat(latitude);
+        setLong(longitude);
         setStart(startvalue);
       });
     } else {
@@ -42,11 +39,17 @@ const FindCab = () => {
 
   useEffect(() => {
     getLocation();
-  }, []);
+  }, [position]);
+
+  // const renderFn = () => {
+  //   return <Maps positions={position} />;
+  // };
+
+  // useEffect(() => {
+  //   renderFn();
+  // }, [position]);
 
   const getAllCabs = async () => {
-    lat = position?.[0];
-    long = position?.[1];
     const payload = await findAllVehicle({ lat, long }).unwrap();
     console.log("fulfilled", payload);
     setShow(true);
@@ -58,8 +61,6 @@ const FindCab = () => {
     e.preventDefault();
     console.log(start, end);
     const payload = await requestRide({
-      startCoordinates,
-      destinationCoordinates,
       lat,
       long,
       start,

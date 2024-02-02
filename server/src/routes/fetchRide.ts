@@ -4,6 +4,6 @@ import { findRides } from "../controllers/driverController";
 
 const router = express.Router();
 
-router.get("/:id", verifyTokenAndAutherization, findRides);
+router.post("/:id", verifyTokenAndAutherization, findRides);
 
 export default router;

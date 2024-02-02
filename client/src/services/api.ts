@@ -83,8 +83,15 @@ export const api: any = createApi({
       }),
     }),
 
-    findNearRides: builder.query<any, any>({
-      query: () => `/fetchride/${id}`,
+    // findNearRides: builder.query<any, any>({
+    //   query: () => `/fetchride/${id}`,
+    // }),
+
+    findAllNearRides: builder.mutation<any, any>({
+      query: () => ({
+        url: `/fetchride/${id}`,
+        method: "POST",
+      }),
     }),
   }),
 });
@@ -99,4 +106,5 @@ export const {
   useFindAllCabsMutation,
   useRequestRideMutation,
   useFindNearRidesQuery,
+  useFindAllNearRidesMutation,
 } = api;

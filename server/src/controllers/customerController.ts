@@ -25,9 +25,18 @@ export const findCabs = async (req: Request, res: Response) => {
 
 export const requestRide = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { startCoordinates, destinationCoordinates, lat, long, start, end } =
-    req.body;
-  console.log(startCoordinates, destinationCoordinates, start, end);
+  const { lat, long, start, end } = req.body;
+
+  const slat = parseFloat(start.split(" ")[0]);
+  const slong = parseFloat(start.split(" ")[2]);
+
+  const elat = parseFloat(end.split(" ")[0]);
+  const elong = parseFloat(end.split(" ")[2]);
+
+  const startlocation = [slong, slat];
+  const endlocation = [elong, elat];
+
+  console.log(startlocation, endlocation, lat, long);
 
   try {
     const requestRide = await Driver.updateMany(
@@ -44,10 +53,8 @@ export const requestRide = async (req: Request, res: Response) => {
       {
         $set: {
           availableRides: {
-            "availableRides.$[element].startPoint.coordinates":
-              startCoordinates,
-            "availableRides.$[element].endingPoint.coordinates":
-              destinationCoordinates,
+            "availableRides.startPoint.coordinates": startlocation,
+            "availableRides.endingPoint.coordinates": endlocation,
           },
         },
       }
