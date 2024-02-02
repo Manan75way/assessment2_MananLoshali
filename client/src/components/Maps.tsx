@@ -10,14 +10,13 @@ interface Props {
 }
 
 const Maps = (positions: Props) => {
-  const location: [number, number] | undefined = positions.positions;
   const [loc, setLoc] = useState<[number, number]>();
 
   useEffect(() => {
-    setLoc(location);
-  }, [location]);
+    setLoc(positions.positions);
+  }, [positions.positions]);
 
-  console.log(location);
+  console.log(loc);
   // const initial = [location?.[0],location?.[1]];
 
   const end: [number, number] = [30.7099713, 76.6899101];
@@ -25,7 +24,7 @@ const Maps = (positions: Props) => {
   return (
     <div>
       <MapContainer
-        center={location}
+        center={[30.7099713, 76.6899101]}
         zoom={13}
         style={{ width: "100%", height: "500px" }}
       >
@@ -34,8 +33,8 @@ const Maps = (positions: Props) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        {location && (
-          <Marker position={location} icon={L.icon({ iconUrl: "/start.png" })} />
+        {loc && (
+          <Marker position={loc} icon={L.icon({ iconUrl: "/start.png" })} />
         )}
 
         {end && (
